@@ -20,6 +20,7 @@ namespace MoveGen {
     inline void getPseudoAttacks(int from, int movingPiece, int pieceType, bool isWhite, uint64_t occupancy, uint64_t friendly, State& state, std::vector<Move>& pseudoMoves) {
         uint64_t pseudoAttacks = getPseudo(from, pieceType, isWhite, occupancy);
         pseudoAttacks &= ~friendly;
+        uint64_t opponent = occupancy & ~friendly;
 
     switch (pieceType) {
         case Const::PT_PAWN: {
@@ -29,27 +30,25 @@ namespace MoveGen {
             bool singlePushBlocked = occupancy & (1ULL << singlePush);
             bool doublePushBlocked = occupancy & (1ULL << doublePush);
             bool isOnStartRank     = (isWhite ? Const::RANK_2 : Const::RANK_7) & (1ULL << from);
-            bool canEnPassant      = (pseudoAttacks & (1ULL << state.enPassantSquare));
+            
+            if (!singlePushBlocked) pseudoMoves.emplace_back(Move(from, singlePush, movingPiece, pieceType, Const::MT_QUIET));
 
-            if (!singlePushBlocked)
-                pseudoMoves.emplace_back(Move(from, singlePush, movingPiece, pieceType, Const::MT_QUIET));
-
-            if (!singlePushBlocked && !doublePushBlocked && isOnStartRank)
-                pseudoMoves.emplace_back(Move(from, doublePush, movingPiece, pieceType, Const::DOUBLE_PUSH));
+            if (!singlePushBlocked && !doublePushBlocked && isOnStartRank) pseudoMoves.emplace_back(Move(from, doublePush, movingPiece, pieceType, Const::DOUBLE_PUSH));
 
             while (pseudoAttacks) {
                 int to = Utils::popLSB(pseudoAttacks);
-                bool isCapture = occupancy & (1ULL << to);
-                if (state.squareToPieceIndex[to] == Const::W_KING || state.squareToPieceIndex[to] == Const::B_KING)
+                int capturePiece = state.squareToPieceIndex[to];
+                bool isCapture = opponent & (1ULL << to);
+                if (capturePiece == Const::W_KING || capturePiece == Const::B_KING)
                     continue;
 
-                if(to == state.enPassantSquare && canEnPassant){
-                    pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_ENPASSANT, state.enPassantTarget));
+                if(to == state.enPassantSquare){
+                    int enPassantCapturePiece = state.squareToPieceIndex[state.enPassantTarget]; 
+                    pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_ENPASSANT, enPassantCapturePiece, state.enPassantTarget));
                     continue;
                 }
 
                 if (isCapture) {
-                    int capturePiece = state.squareToPieceIndex[to];
                     pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_CAPTURE, capturePiece));
                     continue;
                 }
@@ -60,12 +59,12 @@ namespace MoveGen {
         case Const::PT_KING: {
             while (pseudoAttacks) {
                 int to = Utils::popLSB(pseudoAttacks);
-                bool isCapture = occupancy & (1ULL << to);
-                if (state.squareToPieceIndex[to] == Const::W_KING || state.squareToPieceIndex[to] == Const::B_KING)
+                int capturePiece = state.squareToPieceIndex[to];
+                bool isCapture = opponent & (1ULL << to);
+                if (capturePiece == Const::W_KING || capturePiece == Const::B_KING)
                     continue;
 
                 if (isCapture) {
-                    int capturePiece = state.squareToPieceIndex[to];
                     pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_CAPTURE, capturePiece));
                 } else {
                     pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_QUIET));
@@ -77,12 +76,12 @@ namespace MoveGen {
         default:
             while (pseudoAttacks) {
                 int to = Utils::popLSB(pseudoAttacks);
-                bool isCapture = occupancy & (1ULL << to);
-                if (state.squareToPieceIndex[to] == Const::W_KING || state.squareToPieceIndex[to] == Const::B_KING)
+                int capturePiece = state.squareToPieceIndex[to];
+                bool isCapture = opponent & (1ULL << to);
+                if (capturePiece == Const::W_KING || capturePiece == Const::B_KING)
                     continue;
 
                 if (isCapture) {
-                    int capturePiece = state.squareToPieceIndex[to];
                     pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_CAPTURE, capturePiece));
                 } else {
                     pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_QUIET));

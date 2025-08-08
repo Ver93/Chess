@@ -22,6 +22,7 @@ namespace MoveExec {
         ::memcpy(undo.bitboards, state.bitboards, 12 * sizeof(uint64_t));
         ::memcpy(undo.squareToPieceIndex, state.squareToPieceIndex, sizeof(state.squareToPieceIndex));
         ::memcpy(undo.turnOccupancy, state.turnOccupancy, sizeof(state.turnOccupancy));
+        ::memcpy(undo.kingBitMap, state.kingBitMap, sizeof(state.kingBitMap));
         undo.turn = state.turn;
         undo.enPassantSquare = state.enPassantSquare;
         undo.enPassantTarget = state.enPassantTarget;
@@ -44,9 +45,10 @@ namespace MoveExec {
                 setPiece(state, move.to, move.movingPiece);
                 state.enPassantSquare = (state.turn == Const::PC_WHITE) ? move.to - Const::SINGLE_PUSH : move.to + Const::SINGLE_PUSH;
                 state.enPassantTarget = move.to;
+                break;
             case Const::MT_ENPASSANT:
                 clearPiece(state, move.from, move.movingPiece);
-                clearPiece(state, move.from, move.capturePiece);
+                clearPiece(state, move.enPassantTargetSquare, move.enPassantCapturePiece);
                 setPiece(state, move.to, move.movingPiece);
                 break;
             default:
@@ -65,6 +67,7 @@ namespace MoveExec {
         ::memcpy(state.bitboards, undo.bitboards, 12 * sizeof(uint64_t));
         ::memcpy(state.squareToPieceIndex, undo.squareToPieceIndex, sizeof(undo.squareToPieceIndex));
         ::memcpy(state.turnOccupancy, undo.turnOccupancy, sizeof(undo.turnOccupancy));
+        ::memcpy(state.kingBitMap, undo.kingBitMap, sizeof(undo.kingBitMap));
         state.turn = undo.turn;
         state.enPassantSquare = undo.enPassantSquare;
         state.enPassantTarget = undo.enPassantTarget;

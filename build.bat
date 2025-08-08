@@ -12,6 +12,9 @@ C:\msys64\ucrt64\bin\g++.exe ^
     -O3 -march=native -flto -DNDEBUG ^
     -g "%SCRIPT_DIR%core\main.cpp" ^
     -g "%SCRIPT_DIR%core\AttackGlobals.cpp" ^
+    -I "C:\msys64\ucrt64\include" ^
+    -L "C:\msys64\ucrt64\lib" ^
+    -lsfml-graphics -lsfml-window -lsfml-system ^
     -o "%ENGINE_EXE%"
 
 IF %errorlevel% EQU 0 (

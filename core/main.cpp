@@ -3,6 +3,7 @@
 int main(int argc, char *argv[]){
     Chess chess;
     chess.initialize();
-    chess.Perft(5);
+    chess.perft(6);
+    chess.visual();
     return 0;
 }

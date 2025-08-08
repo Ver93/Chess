@@ -5,6 +5,7 @@
 #include "Const.h"
 #include "MoveGen.h"
 #include "Test.h"
+#include "BoardGUI.h"
 
 class Chess {
 public:
@@ -13,11 +14,16 @@ public:
         Utils::loadFen(state, Const::STARTING_FEN);
     }
 
-    inline void Perft(int depth){
+    inline void perft(int depth){
         Test::dividePerft(depth, state);
     }
 
+    inline void visual(){
+        bg.run(state);
+    }
+
 private:
+    BoardGUI bg;
     State state;
     std::vector<Move> pseudoMoves;
 };

@@ -17,5 +17,6 @@ struct Undo
                                 };
 
     uint64_t turnOccupancy[2]   = { Const::NO_MASK, Const::NO_MASK };
+    uint64_t kingBitMap[2]      = { Const::NO_MASK, Const::NO_MASK };
     uint64_t occupancy          = Const::NO_MASK;
 };
