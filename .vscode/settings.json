@@ -3,6 +3,7 @@
         "cstdint": "cpp",
         "vector": "cpp",
         "sstream": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "iostream": "cpp"
     }
 }
