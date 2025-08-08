@@ -10,7 +10,7 @@
 #include "State.h"
 
 namespace Utils {
-    inline void print(std::string& message){
+    inline void print(const std::string& message){
         std::cout << message << std::endl;
     }
 
@@ -118,6 +118,8 @@ namespace Utils {
             }
             rank --;
         }
+        state.kingBitMap[Const::PC_WHITE] = state.bitboards[Const::W_KING];
+        state.kingBitMap[Const::PC_BLACK] = state.bitboards[Const::B_KING];
         refreshOccupancy(state);
         refreshSquareToPieceIndex(state);
         std::cout << "FEN string initialized!" << std::endl;

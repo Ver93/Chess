@@ -28,22 +28,30 @@ namespace MoveGen {
 
             bool singlePushBlocked = occupancy & (1ULL << singlePush);
             bool doublePushBlocked = occupancy & (1ULL << doublePush);
-            bool isOnStartRank = (isWhite ? Const::RANK_2 : Const::RANK_7) & (1ULL << from);
+            bool isOnStartRank     = (isWhite ? Const::RANK_2 : Const::RANK_7) & (1ULL << from);
+            bool canEnPassant      = (pseudoAttacks & (1ULL << state.enPassantSquare));
 
             if (!singlePushBlocked)
                 pseudoMoves.emplace_back(Move(from, singlePush, movingPiece, pieceType, Const::MT_QUIET));
 
             if (!singlePushBlocked && !doublePushBlocked && isOnStartRank)
-                pseudoMoves.emplace_back(Move(from, doublePush, movingPiece, pieceType, Const::MT_QUIET));
+                pseudoMoves.emplace_back(Move(from, doublePush, movingPiece, pieceType, Const::DOUBLE_PUSH));
 
             while (pseudoAttacks) {
                 int to = Utils::popLSB(pseudoAttacks);
+                bool isCapture = occupancy & (1ULL << to);
                 if (state.squareToPieceIndex[to] == Const::W_KING || state.squareToPieceIndex[to] == Const::B_KING)
                     continue;
 
-                if (occupancy & (1ULL << to)) {
+                if(to == state.enPassantSquare && canEnPassant){
+                    pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_ENPASSANT, state.enPassantTarget));
+                    continue;
+                }
+
+                if (isCapture) {
                     int capturePiece = state.squareToPieceIndex[to];
                     pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_CAPTURE, capturePiece));
+                    continue;
                 }
             }
             break;
@@ -52,10 +60,11 @@ namespace MoveGen {
         case Const::PT_KING: {
             while (pseudoAttacks) {
                 int to = Utils::popLSB(pseudoAttacks);
+                bool isCapture = occupancy & (1ULL << to);
                 if (state.squareToPieceIndex[to] == Const::W_KING || state.squareToPieceIndex[to] == Const::B_KING)
                     continue;
 
-                if (occupancy & (1ULL << to)) {
+                if (isCapture) {
                     int capturePiece = state.squareToPieceIndex[to];
                     pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_CAPTURE, capturePiece));
                 } else {
@@ -68,10 +77,11 @@ namespace MoveGen {
         default:
             while (pseudoAttacks) {
                 int to = Utils::popLSB(pseudoAttacks);
+                bool isCapture = occupancy & (1ULL << to);
                 if (state.squareToPieceIndex[to] == Const::W_KING || state.squareToPieceIndex[to] == Const::B_KING)
                     continue;
 
-                if (occupancy & (1ULL << to)) {
+                if (isCapture) {
                     int capturePiece = state.squareToPieceIndex[to];
                     pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_CAPTURE, capturePiece));
                 } else {

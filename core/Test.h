@@ -2,6 +2,7 @@
 #include "State.h"
 #include "MoveGen.h"
 #include "MoveExec.h"
+#include "ThreatGen.h"
 
 namespace Test {
     int perft(int depth, State& state){
@@ -13,6 +14,11 @@ namespace Test {
         for (auto & move : pseudo)
         {
             MoveExec::makeMove(state, move, undo);
+            ThreatGen::updateThreats(state);
+            if(MoveExec::isOpponentKingInCheck(state)){
+                MoveExec::undoMove(state, undo);
+                continue;
+            }
             nodes += perft(depth - 1, state);
             MoveExec::undoMove(state, undo);
         }
@@ -26,6 +32,11 @@ namespace Test {
         for (auto & move : pseudo)
         {
             MoveExec::makeMove(state, move, undo);
+            ThreatGen::updateThreats(state);
+            if(MoveExec::isOpponentKingInCheck(state)){
+                MoveExec::undoMove(state, undo);
+                continue;
+            }
             int nodes = perft(depth - 1, state);
             totalNodes += nodes;
             MoveExec::undoMove(state, undo);

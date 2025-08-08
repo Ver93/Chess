@@ -7,6 +7,7 @@ struct Undo
     int turn                    = 0;
     int squareToPieceIndex[64]  = {};
     int enPassantSquare         = Const::NO_VALUE;
+    int enPassantTarget         = Const::NO_VALUE;
     uint64_t bitboards[12]      = { Const::NO_MASK, Const::NO_MASK,
                                     Const::NO_MASK, Const::NO_MASK,
                                     Const::NO_MASK, Const::NO_MASK,
