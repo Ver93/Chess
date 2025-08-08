@@ -1,14 +1,8 @@
-#include <iostream>
-#include "Magics.h"
-#include "State.h"
-#include "Const.h"
-#include "MoveGen.h"
+#include "Chess.h"
 
-int main(){
-    Magics::initialize();
-    State state;
-    Utils::loadFen(state, Const::STARTING_FEN);
-    std::vector<Move> pseudo = MoveGen::generatePseudoMoves(state);
-    Utils::print((int)pseudo.size());
+int main(int argc, char *argv[]){
+    Chess chess;
+    chess.initialize();
+    chess.Perft(3);
     return 0;
 }

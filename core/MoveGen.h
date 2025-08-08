@@ -90,7 +90,6 @@ namespace MoveGen {
             uint64_t occupancy = friendly | opponent;
             uint64_t temp = friendly;
             
-            Utils::print(friendly);
             while(temp){    
                 int square = Utils::popLSB(temp);
                 int movingPiece = state.squareToPieceIndex[square];
