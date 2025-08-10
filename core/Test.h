@@ -21,10 +21,11 @@ namespace Test {
 
     void countMoveType(Move& move, MoveCounter& counter) {
         switch (move.movingType) {
-            case Const::MT_CAPTURE:       counter.capture++;   break;
-            case Const::MT_ENPASSANT:     counter.enpassant++; counter.capture++; break;
-            case Const::MT_CASTLE:        counter.castle++;    break;
-            case Const::MT_PROMOTION:     counter.promotion++; break;
+            case Const::MT_CAPTURE:               counter.capture++;   break;
+            case Const::MT_ENPASSANT:             counter.enpassant++; counter.capture++; break;
+            case Const::MT_CASTLE:                counter.castle++;    break;
+            case Const::MT_PROMOTION:             counter.promotion++; break;
+            case Const::MT_PROMOTION_CAPTURE:     counter.promotion++; counter.capture++; break;
         }
     }
 

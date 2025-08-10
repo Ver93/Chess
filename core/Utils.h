@@ -87,12 +87,15 @@ namespace Utils {
     inline void loadFen(State& state, const std::string& fen){
         std::cout << "Initializing FEN string.." << std::endl;
         std::stringstream ss(fen);
-        std::string position;
+        std::string position, activeColor, castling, enPassant;
 
         std::getline(ss, position, ' ');
+        std::getline(ss, activeColor, ' ');
+        std::getline(ss, castling, ' ');
+        std::getline(ss, enPassant, ' ');
+
         std::stringstream posStream(position);
         std::string row;
-
         int rank = 7;
 
         while(std::getline(posStream, row, '/')){
@@ -104,7 +107,7 @@ namespace Utils {
                     if(file >= 8 || rank < 0) return;
                     int square = rank * 8 + file;
                     int pieceIndex = Const::NO_VALUE;
-                    
+
                     switch (c) {
                         case 'P': pieceIndex = Const::W_PAWN; break;
                         case 'N': pieceIndex = Const::W_KNIGHT; break;
@@ -124,11 +127,35 @@ namespace Utils {
                         state.bitboards[pieceIndex] |= 1ULL << square;
                     }
 
-                    file ++;
+                    file++;
                 }
             }
-            rank --;
+            rank--;
         }
+
+        // Active color
+        state.turn = (activeColor == "w") ? Const::PC_WHITE : Const::PC_BLACK;
+
+        // Castling rights
+        state.kingMoved[Const::PC_WHITE] = !(castling.find('K') != std::string::npos || castling.find('Q') != std::string::npos);
+        state.kingMoved[Const::PC_BLACK] = !(castling.find('k') != std::string::npos || castling.find('q') != std::string::npos);
+
+        state.rooksMoved[Const::PC_WHITE][0] = (castling.find('Q') == std::string::npos); // Queenside
+        state.rooksMoved[Const::PC_WHITE][1] = (castling.find('K') == std::string::npos); // Kingside
+        state.rooksMoved[Const::PC_BLACK][0] = (castling.find('q') == std::string::npos);
+        state.rooksMoved[Const::PC_BLACK][1] = (castling.find('k') == std::string::npos);
+
+        // En passant target
+        if(enPassant != "-"){
+            int file = enPassant[0] - 'a';
+            int rank = enPassant[1] - '1';
+            state.enPassantSquare = rank * 8 + file;
+            state.enPassantTarget = state.enPassantSquare;
+        } else {
+            state.enPassantSquare = Const::NO_VALUE;
+            state.enPassantTarget = Const::NO_VALUE;
+        }
+
         state.kingBitMap[Const::PC_WHITE] = state.bitboards[Const::W_KING];
         state.kingBitMap[Const::PC_BLACK] = state.bitboards[Const::B_KING];
         refreshOccupancy(state);

@@ -9,6 +9,7 @@ set "BIN_DIR=%SCRIPT_DIR%bin"
 set "ENGINE_EXE=%BIN_DIR%\Engine.exe"
 
 C:\msys64\ucrt64\bin\g++.exe ^
+    -std=c++23 ^
     -O3 -march=native -flto -DNDEBUG ^
     -g "%SCRIPT_DIR%core\main.cpp" ^
     -g "%SCRIPT_DIR%core\AttackGlobals.cpp" ^

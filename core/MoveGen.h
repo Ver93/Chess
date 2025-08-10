@@ -30,11 +30,14 @@ namespace MoveGen {
             bool singlePushBlocked = occupancy & (1ULL << singlePush);
             bool doublePushBlocked = occupancy & (1ULL << doublePush);
             bool isOnStartRank     = (isWhite ? Const::RANK_2 : Const::RANK_7) & (1ULL << from);
-            bool isOnPromotionRank = (isWhite ? Const::RANK_8 : Const::RANK_1) & (1ULL << from);
+            bool canPromotionPush = (isWhite ? Const::RANK_8 : Const::RANK_1) & (1ULL << singlePush);
             
             if (!singlePushBlocked) {
-                if(isOnPromotionRank){
-                    pseudoMoves.emplace_back(Move(from, singlePush, movingPiece, pieceType, Const::MT_PROMOTION));
+                if(canPromotionPush){
+                        pseudoMoves.emplace_back(Move(from, singlePush, movingPiece, pieceType, Const::MT_PROMOTION, Const::NO_VALUE, Const::NO_VALUE, Const::NO_VALUE, (isWhite) ? Const::W_KNIGHT : Const::B_KNIGHT, Const::NO_VALUE));
+                        pseudoMoves.emplace_back(Move(from, singlePush, movingPiece, pieceType, Const::MT_PROMOTION, Const::NO_VALUE, Const::NO_VALUE, Const::NO_VALUE, (isWhite) ? Const::W_BISHOP : Const::B_BISHOP, Const::NO_VALUE));
+                        pseudoMoves.emplace_back(Move(from, singlePush, movingPiece, pieceType, Const::MT_PROMOTION, Const::NO_VALUE, Const::NO_VALUE, Const::NO_VALUE, (isWhite) ? Const::W_ROOK: Const::B_ROOK, Const::NO_VALUE));
+                        pseudoMoves.emplace_back(Move(from, singlePush, movingPiece, pieceType, Const::MT_PROMOTION, Const::NO_VALUE, Const::NO_VALUE, Const::NO_VALUE, (isWhite) ? Const::W_QUEEN : Const::B_QUEEN, Const::NO_VALUE));
                 } else {
                     pseudoMoves.emplace_back(Move(from, singlePush, movingPiece, pieceType, Const::MT_QUIET));
                 }
@@ -46,6 +49,8 @@ namespace MoveGen {
                 int to = Utils::popLSB(pseudoAttacks);
                 int capturePiece = state.squareToPieceIndex[to];
                 bool isCapture = opponent & (1ULL << to);
+                bool isPromotionCapture = (isWhite ? Const::RANK_8 : Const::RANK_1) & (1ULL << to);
+                
                 if (capturePiece == Const::W_KING || capturePiece == Const::B_KING)
                     continue;
 
@@ -56,8 +61,11 @@ namespace MoveGen {
                 }
 
                 if (isCapture) {
-                    if(isOnPromotionRank) {
-                        pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_PROMOTION_CAPTURE, capturePiece));
+                    if(isPromotionCapture) {
+                        pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_PROMOTION_CAPTURE, Const::NO_VALUE, Const::NO_VALUE, Const::NO_VALUE, (isWhite) ? Const::W_KNIGHT : Const::B_KNIGHT, capturePiece));
+                        pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_PROMOTION_CAPTURE, Const::NO_VALUE, Const::NO_VALUE, Const::NO_VALUE, (isWhite) ? Const::W_BISHOP : Const::B_BISHOP, capturePiece));
+                        pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_PROMOTION_CAPTURE, Const::NO_VALUE, Const::NO_VALUE, Const::NO_VALUE, (isWhite) ? Const::W_ROOK: Const::B_ROOK, capturePiece));
+                        pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_PROMOTION_CAPTURE, Const::NO_VALUE, Const::NO_VALUE, Const::NO_VALUE, (isWhite) ? Const::W_QUEEN : Const::B_QUEEN, capturePiece));
                     } else {
                         pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_CAPTURE, capturePiece));
                     }

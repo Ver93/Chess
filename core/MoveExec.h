@@ -17,7 +17,7 @@ namespace MoveExec {
     inline bool isOpponentKingInCheck(State& state){
         return state.threatMap[state.turn] & state.kingBitMap[state.turn ^ 1];
     }
-    
+
     inline bool isCastlingPathSafe(State& state, int toSquare, uint64_t threatMap) {
         uint64_t mask = 0;
         switch (toSquare) {
@@ -72,6 +72,15 @@ namespace MoveExec {
                 clearPiece(state, move.rookSquare, move.rookPiece);
                 setPiece(state, move.to, move.movingPiece);
                 setPiece(state, move.rookDestination, move.rookPiece);
+                break;
+            case Const::MT_PROMOTION:
+                clearPiece(state, move.from, move.movingPiece);
+                setPiece(state, move.to, move.promotionPiece);
+                break;
+            case Const::MT_PROMOTION_CAPTURE:
+                clearPiece(state, move.from, move.movingPiece);
+                clearPiece(state, move.to, move.capturePiece);
+                setPiece(state, move.to, move.promotionPiece);
                 break;
             default:
                 break;
