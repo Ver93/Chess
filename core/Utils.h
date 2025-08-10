@@ -18,6 +18,10 @@ namespace Utils {
         std::cout << value << std::endl;
     }
 
+    inline void print(long long value){
+        std::cout << value << std::endl;
+    }
+
     inline void print(std::string& message, int value){
         std::cout << message << value << std::endl;
     }
@@ -32,6 +36,13 @@ namespace Utils {
             std::cout << std::endl;
         }
         std::cout << std::endl;
+    }
+
+    inline std::string squareName(int sq) {
+        const char files[] = "abcdefgh";
+        int file = sq % 8;
+        int rank = sq / 8;
+        return std::string(1, files[file]) + std::to_string(rank + 1);
     }
 
     

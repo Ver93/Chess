@@ -32,6 +32,13 @@ public:
                     case sf::Event::MouseButtonPressed:
                         updateSelection(state);
                         break;
+                            case sf::Event::KeyPressed:
+                        if (event.key.code == sf::Keyboard::R) {
+                            state = originalState;
+                            Utils::print("🔄 Board reset via keyboard");
+                        }
+                        break;
+
                     default:
                         break;
                 }
@@ -46,6 +53,7 @@ public:
         Utils::print("🔍 End Reached");
     }
 
+    State originalState;
 private:
     sf::RenderWindow window;
     sf::Font font;
@@ -159,56 +167,69 @@ private:
         }
     }
 
-void updateSelection(State& state) {
-    int clickedIndex = selectSquare();
+    void updateSelection(State& state) {
+        int clickedIndex = selectSquare();
 
-    if (selectedSquare != -1 && clickedIndex != selectedSquare) {
-        for (Move& move : legalMoves) {
-            if (move.to == clickedIndex) {
-                Undo undo;
-                MoveExec::makeMove(state, move, undo);
-                ThreatGen::updateThreats(state);
-                selectedSquare = -1;
-                legalMoves.clear();
-                resetColors();
-                return;
+        if (selectedSquare != -1 && clickedIndex != selectedSquare) {
+            for (Move& move : legalMoves) {
+                if (move.to == clickedIndex) {
+                    Undo undo;
+                    MoveExec::makeMove(state, move, undo);
+                    ThreatGen::updateThreats(state);
+                    selectedSquare = -1;
+                    legalMoves.clear();
+                    resetColors();
+                    return;
+                }
             }
         }
-    }
 
-    selectedSquare = clickedIndex;
-    legalMoves.clear();
-    resetColors();
+        selectedSquare = clickedIndex;
+        legalMoves.clear();
+        resetColors();
 
-    int pieceIndex = -1;
-    for (int i = 0; i < 12; ++i) {
-        if (state.bitboards[i] & (1ULL << clickedIndex)) {
-            pieceIndex = i;
-            break;
-        }
-    }
-
-    int pieceColor = (pieceIndex < 6) ? 0 : 1;
-    if (pieceIndex == -1 || pieceColor != state.turn)
-        return;
-
-    std::vector<Move> pseudoMoves = MoveGen::generatePseudoMoves(state);
-    Undo undo;
-
-    for (Move& move : pseudoMoves) {
-        if (move.from != clickedIndex) continue;
-
-        MoveExec::makeMove(state, move, undo);
-        ThreatGen::updateThreats(state);
-
-        if (!MoveExec::isOpponentKingInCheck(state)) {
-            legalMoves.push_back(move);
-            highlightSquare(move.to, sf::Color::Green);
+        int pieceIndex = -1;
+        for (int i = 0; i < 12; ++i) {
+            if (state.bitboards[i] & (1ULL << clickedIndex)) {
+                pieceIndex = i;
+                break;
+            }
         }
 
-        MoveExec::undoMove(state, undo);
-    }
+        int pieceColor = (pieceIndex < 6) ? 0 : 1;
+        if (pieceIndex == -1 || pieceColor != state.turn)
+            return;
 
-    highlightSquare(clickedIndex, sf::Color::Blue);
-}
+        std::vector<Move> pseudoMoves = MoveGen::generatePseudoMoves(state);
+        Undo undo;
+
+        for (Move& move : pseudoMoves) {
+            if (move.from != clickedIndex) continue;
+
+            if (move.movingType == Const::MT_CASTLE) {
+                int kingSquare = (state.turn == Const::PC_WHITE) ? Const::SQ_E1 : Const::SQ_E8;
+                if (state.threatMap[state.turn ^ 1] & (1ULL << kingSquare)) continue;
+                if (!MoveExec::isCastlingPathSafe(state, move.to, state.threatMap[state.turn ^ 1])) continue;
+            }
+
+            MoveExec::makeMove(state, move, undo);
+            ThreatGen::updateThreats(state);
+
+            bool isLegal = !MoveExec::isOpponentKingInCheck(state);
+
+            if (isLegal && move.movingType == Const::MT_CASTLE) {
+                bool isWhite = (state.turn == Const::PC_WHITE);
+                isLegal = MoveExec::isCastlingPathSafe(state, move.to, state.threatMap[state.turn]);
+            }
+
+            if (isLegal) {
+                legalMoves.push_back(move);
+                highlightSquare(move.to, sf::Color::Green);
+            }
+
+            MoveExec::undoMove(state, undo);
+        }
+
+        highlightSquare(clickedIndex, sf::Color::Blue);
+    }
 };

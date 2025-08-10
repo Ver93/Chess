@@ -12,6 +12,7 @@ public:
     inline void initialize(){
         Magics::initialize();
         Utils::loadFen(state, Const::STARTING_FEN);
+        bg.originalState = state;
     }
 
     inline void perft(int depth){

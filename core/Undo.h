@@ -18,5 +18,9 @@ struct Undo
 
     uint64_t turnOccupancy[2]   = { Const::NO_MASK, Const::NO_MASK };
     uint64_t kingBitMap[2]      = { Const::NO_MASK, Const::NO_MASK };
+    uint64_t threatMap[2]       = { Const::NO_MASK, Const::NO_MASK };
     uint64_t occupancy          = Const::NO_MASK;
+
+    bool kingMoved[2]           = { false, false };
+    bool rooksMoved[2][2]       = { { false, false }, { false, false } };
 };

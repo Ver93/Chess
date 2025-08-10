@@ -30,8 +30,15 @@ namespace MoveGen {
             bool singlePushBlocked = occupancy & (1ULL << singlePush);
             bool doublePushBlocked = occupancy & (1ULL << doublePush);
             bool isOnStartRank     = (isWhite ? Const::RANK_2 : Const::RANK_7) & (1ULL << from);
+            bool isOnPromotionRank = (isWhite ? Const::RANK_8 : Const::RANK_1) & (1ULL << from);
             
-            if (!singlePushBlocked) pseudoMoves.emplace_back(Move(from, singlePush, movingPiece, pieceType, Const::MT_QUIET));
+            if (!singlePushBlocked) {
+                if(isOnPromotionRank){
+                    pseudoMoves.emplace_back(Move(from, singlePush, movingPiece, pieceType, Const::MT_PROMOTION));
+                } else {
+                    pseudoMoves.emplace_back(Move(from, singlePush, movingPiece, pieceType, Const::MT_QUIET));
+                }
+            }
 
             if (!singlePushBlocked && !doublePushBlocked && isOnStartRank) pseudoMoves.emplace_back(Move(from, doublePush, movingPiece, pieceType, Const::DOUBLE_PUSH));
 
@@ -49,7 +56,11 @@ namespace MoveGen {
                 }
 
                 if (isCapture) {
-                    pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_CAPTURE, capturePiece));
+                    if(isOnPromotionRank) {
+                        pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_PROMOTION_CAPTURE, capturePiece));
+                    } else {
+                        pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_CAPTURE, capturePiece));
+                    }
                     continue;
                 }
             }
@@ -70,6 +81,32 @@ namespace MoveGen {
                     pseudoMoves.emplace_back(Move(from, to, movingPiece, pieceType, Const::MT_QUIET));
                 }
             }
+
+            
+
+            if(state.kingMoved[state.turn]) return;
+            if(state.kingBitMap[state.turn] & state.threatMap[state.turn ^ 1]) return;
+            uint64_t queenSideSquares = (isWhite) ? ((1ULL << Const::SQ_B1) | (1ULL << Const::SQ_C1) | (1ULL << Const::SQ_D1)) : ((1ULL << Const::SQ_B8) |(1ULL << Const::SQ_C8) | (1ULL << Const::SQ_D8));
+            uint64_t kingSideSquares = (isWhite) ? ((1ULL << Const::SQ_F1) | (1ULL << Const::SQ_G1)) : ((1ULL << Const::SQ_F8) | (1ULL << Const::SQ_G8));
+            bool isQueenSideBlocked = occupancy & queenSideSquares;
+            bool isKingSideBlocked = occupancy & kingSideSquares;
+
+            if(!isQueenSideBlocked && !state.rooksMoved[state.turn][Const::C_QUEEN_SIDE]){
+                int rookSquare = isWhite ? Const::SQ_A1 : Const::SQ_A8;
+                int rookDestination = isWhite ? Const::SQ_D1 : Const::SQ_D8;
+                int kingDestination = isWhite ? Const::SQ_C1 : Const::SQ_C8;
+                int rookPiece = isWhite ? Const::W_ROOK : Const::B_ROOK;
+                pseudoMoves.emplace_back(Move(from, kingDestination, movingPiece, pieceType, Const::MT_CASTLE, rookSquare, rookDestination, rookPiece));
+            }
+
+            if(!isKingSideBlocked && !state.rooksMoved[state.turn][Const::C_KING_SIDE]){
+                int rookSquare = isWhite ? Const::SQ_H1 : Const::SQ_H8;
+                int rookDestination = isWhite ? Const::SQ_F1 : Const::SQ_F8;
+                int kingDestination = isWhite ? Const::SQ_G1 : Const::SQ_G8;
+                int rookPiece = isWhite ? Const::W_ROOK : Const::B_ROOK;
+                pseudoMoves.emplace_back(Move(from, kingDestination, movingPiece, pieceType, Const::MT_CASTLE, rookSquare, rookDestination, rookPiece));
+            }
+
             break;
         }
 

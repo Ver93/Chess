@@ -53,9 +53,29 @@ namespace Const {
     constexpr int SINGLE_PUSH                   = 8;
     constexpr int DOUBLE_PUSH                   = 16;
 
-    /* Helpers */
-    constexpr int getPieceType(int pieceIndex) { return (pieceIndex >= 6) ? pieceIndex - 6 : pieceIndex; }
-    constexpr int getPieceIndex(int pieceType) { return (pieceType >= 6) ? pieceType + 6 : pieceType; }
+    /* Castle Values */
+    constexpr int C_QUEEN_SIDE                  = 0;
+    constexpr int C_KING_SIDE                   = 1;
+
+    constexpr int SQ_A1                         = 0;
+    constexpr int SQ_B1                         = 1;
+    constexpr int SQ_C1                         = 2;
+    constexpr int SQ_D1                         = 3;
+
+    constexpr int SQ_E1                         = 4;
+    constexpr int SQ_F1                         = 5;
+    constexpr int SQ_G1                         = 6;
+    constexpr int SQ_H1                         = 7;
+
+    constexpr int SQ_A8                         = 56;
+    constexpr int SQ_B8                         = 57;
+    constexpr int SQ_C8                         = 58;
+    constexpr int SQ_D8                         = 59;
+
+    constexpr int SQ_E8                         = 60;
+    constexpr int SQ_F8                         = 61;
+    constexpr int SQ_G8                         = 62;
+    constexpr int SQ_H8                         = 63;
 
     /* Bitmap file exclusions */
     constexpr uint64_t EXCLUDE_A_FILE           = 0xfefefefefefefefeULL;
@@ -76,4 +96,10 @@ namespace Const {
 
     /* FEN-string constants */
     const std::string STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    const std::string CASTLE_FEN = "r2qk2r/8/8/8/8/8/8/R2QK2R w KQkq - 0 1";
+    const std::string CASTLE_FEN_KIWI = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ";
+
+    /* Helpers */
+    constexpr int getPieceType(int pieceIndex) { return (pieceIndex >= 6) ? pieceIndex - 6 : pieceIndex; }
+    constexpr int getPieceIndex(int pieceType) { return (pieceType >= 6) ? pieceType + 6 : pieceType; }
 }
