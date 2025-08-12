@@ -198,4 +198,35 @@ namespace Const {
         }
         return 0;
     }
+
+    constexpr uint64_t FILE_MASKS[8] = {
+        0x0101010101010101ULL, // File A
+        0x0202020202020202ULL, // File B
+        0x0404040404040404ULL, // File C
+        0x0808080808080808ULL, // File D
+        0x1010101010101010ULL, // File E
+        0x2020202020202020ULL, // File F
+        0x4040404040404040ULL, // File G
+        0x8080808080808080ULL  // File H
+    };
+
+    constexpr uint64_t getPassedPawnFileMask(int sq) {
+        int file = sq % 8;
+        uint64_t mask = FILE_MASKS[file];
+        if (file > 0) mask |= FILE_MASKS[file - 1];
+        if (file < 7) mask |= FILE_MASKS[file + 1];
+
+        return mask;
+    }
+
+    constexpr uint64_t getCurrentFileMask(int sq) {
+        int file = sq % 8;
+        uint64_t mask = FILE_MASKS[file];
+        return mask;
+    }
+
+    constexpr int WT_KNIGHT                 = 4;
+    constexpr int WT_BISHOP                 = 3;
+    constexpr int WT_ROOK                   = 2;
+    constexpr int WT_QUEEN                  = 1;
 }

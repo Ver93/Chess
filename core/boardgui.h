@@ -11,6 +11,9 @@
 #include "moveval.h"
 #include "threatgen.h"
 #include "engine.h"
+#include "timer.h"
+
+#include "Search.h"
 
 struct Square {
     sf::RectangleShape rect;
@@ -181,9 +184,25 @@ private:
                     MoveExec::switchTurn(state);
                     ThreatGen::updateThreats(state);
 
+                    if(state.turn == Const::PC_BLACK){
+                        Timer::start();
+                        Move bestMove = Search::findBestMove(state, 4);
+                        Timer::stop();
+                        MoveExec::makeMove(state, bestMove, undo);
+                        MoveExec::switchTurn(state);
+                        ThreatGen::updateThreats(state);
+                        Utils::print(bestMove.score);
+                    }
+
                     selectedSquare = -1;
                     legalMoves.clear();
                     resetColors();
+
+                    uint64_t king = state.kingBitMap[state.turn];
+                    int kingSq = Utils::popLSB(king);
+                    if (MoveVal::isKingInCheckAfterMove(state)) {
+                        highlightSquare(kingSq, sf::Color::Red);
+                    }
                     return;
                 }
             }

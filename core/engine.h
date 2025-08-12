@@ -28,8 +28,6 @@ namespace Engine {
 
             if (!MoveVal::isKingInCheckAfterMove(state)) {
                 legalMoves.emplace_back(move);
-                MoveExec::undoMove(state, undo);
-                continue;
             }
             MoveExec::undoMove(state, undo);
         }

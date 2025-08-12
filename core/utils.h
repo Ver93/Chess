@@ -17,34 +17,6 @@ namespace Utils {
         (std::cout << ... << args) << std::endl;
     }
 
-    // inline void print(const std::string& message){
-    //     std::cout << message << std::endl;
-    // }
-
-    // inline void print(const std::string& first, const std::string& second){
-    //     std::cout << first << " " << second << std::endl;
-    // }
-
-    // inline void print(const int value){
-    //     std::cout << value << std::endl;
-    // }
-
-    // inline void print(const long long value){
-    //     std::cout << value << std::endl;
-    // }
-
-    // inline void print(const std::string& message, const int value){
-    //     std::cout << message << value << std::endl;
-    // }
-
-    // inline void print(const std::string& message, const long long value){
-    //     std::cout << message << value << std::endl;
-    // }
-
-    // inline void print(const std::string& message, const long long value){
-    //     std::cout << message << value << std::endl;
-    // }
-
     inline void print(const uint64_t mask) {
         std::bitset<64> bm(mask);
         for (int rank = 7; rank >= 0; --rank) {
@@ -177,5 +149,18 @@ namespace Utils {
         refreshOccupancy(state);
         refreshSquareToPieceIndex(state);
         std::cout << "FEN string initialized!" << std::endl;
+    }
+
+    inline int mirror(int sq) {
+        return (sq ^ 56);
+    }
+
+    inline int countBits(uint64_t bb) {
+        int count = 0;
+        while (bb) {
+            Utils::popLSB(bb);
+            count++;
+        }
+        return count;
     }
 }

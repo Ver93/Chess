@@ -59,6 +59,7 @@ int main(int argc, char* argv[]) {
     } else if (mode == "debug") {
         Utils::loadFen(state, Const::STARTING_FEN);
         BoardGUI vb;
+        vb.originalState = state;
         vb.run(state);
 
     } else {
