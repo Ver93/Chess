@@ -1,6 +1,8 @@
 #pragma once
+
 #include <cstdint>
-#include "Const.h"
+
+#include "const.h"
 
 struct Undo
 {

@@ -1,4 +1,5 @@
 #pragma once
+
 #include <cstdint>
 #include <vector>
 #include <random>
@@ -8,8 +9,8 @@
 #include <memory>
 #include <string>
 
-#include "Const.h"
-#include "AttackData.h"
+#include "const.h"
+#include "attackdata.h"
 
 namespace MagicUtils {
     inline uint64_t generateSlidingMoves(int square, uint64_t blockerConfig, int pieceType){

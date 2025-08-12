@@ -1,6 +1,7 @@
 #pragma once
-#include "MagicUtils.h"
-#include "AttackGlobals.h"
+
+#include "magicutils.h"
+#include "attackglobals.h"
 
 namespace Magics {
     inline void initialize() {

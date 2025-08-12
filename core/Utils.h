@@ -1,4 +1,5 @@
 #pragma once
+
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -7,26 +8,44 @@
 #include <sstream>
 #include <fstream>
 
-#include "State.h"
+#include "state.h"
 
 namespace Utils {
-    inline void print(const std::string& message){
-        std::cout << message << std::endl;
+
+    template<typename... Args>
+    inline void print(const Args&... args){
+        (std::cout << ... << args) << std::endl;
     }
 
-    inline void print(int value){
-        std::cout << value << std::endl;
-    }
+    // inline void print(const std::string& message){
+    //     std::cout << message << std::endl;
+    // }
 
-    inline void print(long long value){
-        std::cout << value << std::endl;
-    }
+    // inline void print(const std::string& first, const std::string& second){
+    //     std::cout << first << " " << second << std::endl;
+    // }
 
-    inline void print(std::string& message, int value){
-        std::cout << message << value << std::endl;
-    }
+    // inline void print(const int value){
+    //     std::cout << value << std::endl;
+    // }
 
-    inline void print(uint64_t mask) {
+    // inline void print(const long long value){
+    //     std::cout << value << std::endl;
+    // }
+
+    // inline void print(const std::string& message, const int value){
+    //     std::cout << message << value << std::endl;
+    // }
+
+    // inline void print(const std::string& message, const long long value){
+    //     std::cout << message << value << std::endl;
+    // }
+
+    // inline void print(const std::string& message, const long long value){
+    //     std::cout << message << value << std::endl;
+    // }
+
+    inline void print(const uint64_t mask) {
         std::bitset<64> bm(mask);
         for (int rank = 7; rank >= 0; --rank) {
             for (int file = 0; file < 8; ++file) {
@@ -38,7 +57,7 @@ namespace Utils {
         std::cout << std::endl;
     }
 
-    inline std::string squareName(int sq) {
+    inline std::string squareName(const int sq) {
         const char files[] = "abcdefgh";
         int file = sq % 8;
         int rank = sq / 8;
@@ -133,19 +152,16 @@ namespace Utils {
             rank--;
         }
 
-        // Active color
         state.turn = (activeColor == "w") ? Const::PC_WHITE : Const::PC_BLACK;
 
-        // Castling rights
         state.kingMoved[Const::PC_WHITE] = !(castling.find('K') != std::string::npos || castling.find('Q') != std::string::npos);
         state.kingMoved[Const::PC_BLACK] = !(castling.find('k') != std::string::npos || castling.find('q') != std::string::npos);
 
-        state.rooksMoved[Const::PC_WHITE][0] = (castling.find('Q') == std::string::npos); // Queenside
-        state.rooksMoved[Const::PC_WHITE][1] = (castling.find('K') == std::string::npos); // Kingside
+        state.rooksMoved[Const::PC_WHITE][0] = (castling.find('Q') == std::string::npos);
+        state.rooksMoved[Const::PC_WHITE][1] = (castling.find('K') == std::string::npos);
         state.rooksMoved[Const::PC_BLACK][0] = (castling.find('q') == std::string::npos);
         state.rooksMoved[Const::PC_BLACK][1] = (castling.find('k') == std::string::npos);
 
-        // En passant target
         if(enPassant != "-"){
             int file = enPassant[0] - 'a';
             int rank = enPassant[1] - '1';

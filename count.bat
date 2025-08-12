@@ -1,46 +1,43 @@
 @echo off
-setlocal enabledelayedexpansion
+setlocal EnableDelayedExpansion
 
-:: File name in same directory
-set "filePath=c.txt"
-
-:: Check if file exists
-if not exist "%filePath%" (
-    echo File not found: %filePath%
-    goto :eof
-)
-
-:: Sort and overwrite original file
-set "tempFile=%TEMP%\sorted_lines.txt"
-sort "%filePath%" > "%tempFile%"
-copy /Y "%tempFile%" "%filePath%" >nul
-
-set "prevLine="
+:: Set the folder to search — current directory
+set "folder=%CD%/core"
 set /a totalLines=0
-set /a duplicateLines=0
-set /a uniqueLines=0
 
-for /f "usebackq delims=" %%A in ("%filePath%") do (
-    set "currentLine=%%A"
-    set /a totalLines+=1
-
-    if "!currentLine!"=="!prevLine!" (
-        set /a duplicateLines+=1
-    ) else (
-        set /a uniqueLines+=1
+:: Check if "sub" argument is passed
+if /i "%~1"=="sub" (
+    echo Counting only in current folder: "%folder%"
+    
+    :: Count .cpp files in current folder only
+    for %%F in ("%folder%\*.cpp") do (
+        for /f %%L in ('type "%%F" ^| find /v /c ""') do (
+            set /a totalLines+=%%L
+        )
     )
-    set "prevLine=!currentLine!"
+
+    :: Count .h files in current folder only
+    for %%F in ("%folder%\*.h") do (
+        for /f %%L in ('type "%%F" ^| find /v /c ""') do (
+            set /a totalLines+=%%L
+        )
+    )
+) else (
+    echo Counting recursively in "%folder%" and subfolders
+
+    :: Count .cpp files recursively
+    for /R "%folder%" %%F in (*.cpp) do (
+        for /f %%L in ('type "%%F" ^| find /v /c ""') do (
+            set /a totalLines+=%%L
+        )
+    )
+
+    :: Count .h files recursively
+    for /R "%folder%" %%F in (*.h) do (
+        for /f %%L in ('type "%%F" ^| find /v /c ""') do (
+            set /a totalLines+=%%L
+        )
+    )
 )
 
-echo.
-echo File: %filePath% (now sorted)
-echo --------------------------
-echo Total lines     : %totalLines%
-echo Unique lines    : %uniqueLines%
-echo Duplicate lines : %duplicateLines%
-echo --------------------------
-
-:: Clean up
-del "%tempFile%" >nul 2>&1
-endlocal
-pause
+echo Total lines in .cpp and .h files: %totalLines%

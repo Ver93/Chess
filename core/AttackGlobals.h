@@ -1,7 +1,8 @@
 #pragma once
+
 #include <memory>
 
-#include "AttackData.h"
+#include "attackdata.h"
 
 namespace AttackGlobals {
     extern std::unique_ptr<AttackData> ad;

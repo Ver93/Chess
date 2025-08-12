@@ -1,9 +1,10 @@
 #pragma once
-#include "State.h"
-#include "Move.h"
-#include "Undo.h"
-#include "Const.h"
-#include "Utils.h"
+
+#include "state.h"
+#include "move.h"
+#include "undo.h"
+#include "const.h"
+#include "utils.h"
 
 namespace MoveExec {
     inline void setPiece(State& state, int square, int movingPiece) {
@@ -14,23 +15,11 @@ namespace MoveExec {
         state.bitboards[movingPiece] &= ~(1ULL << square);
     }
 
-    inline bool isOpponentKingInCheck(State& state){
-        return state.threatMap[state.turn] & state.kingBitMap[state.turn ^ 1];
+    inline void switchTurn(State& state){
+        state.turn ^= 1;
     }
 
-    inline bool isCastlingPathSafe(State& state, int toSquare, uint64_t threatMap) {
-        uint64_t mask = 0;
-        switch (toSquare) {
-            case Const::SQ_G1: mask = (1ULL << Const::SQ_E1) | (1ULL << Const::SQ_F1) | (1ULL << Const::SQ_G1); break;
-            case Const::SQ_C1: mask = (1ULL << Const::SQ_E1) | (1ULL << Const::SQ_D1) | (1ULL << Const::SQ_C1); break;
-            case Const::SQ_G8: mask = (1ULL << Const::SQ_E8) | (1ULL << Const::SQ_F8) | (1ULL << Const::SQ_G8); break;
-            case Const::SQ_C8: mask = (1ULL << Const::SQ_E8) | (1ULL << Const::SQ_D8) | (1ULL << Const::SQ_C8); break;
-            default: return true;
-        }
-        return !(threatMap & mask);
-    }
-
-    void makeMove(State& state, Move& move, Undo& undo) {
+    void makeMove(State& state, const Move& move, Undo& undo) {
         ::memcpy(undo.bitboards, state.bitboards, 12 * sizeof(uint64_t));
         ::memcpy(undo.squareToPieceIndex, state.squareToPieceIndex, sizeof(state.squareToPieceIndex));
         ::memcpy(undo.turnOccupancy, state.turnOccupancy, sizeof(state.turnOccupancy));
@@ -91,17 +80,17 @@ namespace MoveExec {
         }
 
         if(move.movingPiece == Const::B_ROOK || move.movingPiece == Const::W_ROOK){
-            if(move.from == Const::SQ_A1) state.rooksMoved[Const::PC_WHITE][Const::C_QUEEN_SIDE] = true;
-            if(move.from == Const::SQ_H1) state.rooksMoved[Const::PC_WHITE][Const::C_KING_SIDE] = true;
-            if(move.from == Const::SQ_A8) state.rooksMoved[Const::PC_BLACK][Const::C_QUEEN_SIDE] = true;
-            if(move.from == Const::SQ_H8) state.rooksMoved[Const::PC_BLACK][Const::C_KING_SIDE] = true;
+            if(move.from == Const::SQUARE::A1) state.rooksMoved[Const::PC_WHITE][Const::C_QUEEN_SIDE] = true;
+            if(move.from == Const::SQUARE::H1) state.rooksMoved[Const::PC_WHITE][Const::C_KING_SIDE] = true;
+            if(move.from == Const::SQUARE::A8) state.rooksMoved[Const::PC_BLACK][Const::C_QUEEN_SIDE] = true;
+            if(move.from == Const::SQUARE::H8) state.rooksMoved[Const::PC_BLACK][Const::C_KING_SIDE] = true;
         }
 
         if(move.capturePiece == Const::B_ROOK || move.capturePiece == Const::W_ROOK){
-            if(move.to == Const::SQ_A1) state.rooksMoved[Const::PC_WHITE][Const::C_QUEEN_SIDE] = true;
-            if(move.to == Const::SQ_H1) state.rooksMoved[Const::PC_WHITE][Const::C_KING_SIDE] = true;
-            if(move.to == Const::SQ_A8) state.rooksMoved[Const::PC_BLACK][Const::C_QUEEN_SIDE] = true;
-            if(move.to == Const::SQ_H8) state.rooksMoved[Const::PC_BLACK][Const::C_KING_SIDE] = true;
+            if(move.to == Const::SQUARE::A1) state.rooksMoved[Const::PC_WHITE][Const::C_QUEEN_SIDE] = true;
+            if(move.to == Const::SQUARE::H1) state.rooksMoved[Const::PC_WHITE][Const::C_KING_SIDE] = true;
+            if(move.to == Const::SQUARE::A8) state.rooksMoved[Const::PC_BLACK][Const::C_QUEEN_SIDE] = true;
+            if(move.to == Const::SQUARE::H8) state.rooksMoved[Const::PC_BLACK][Const::C_KING_SIDE] = true;
         }
 
         state.kingBitMap[Const::PC_WHITE] = state.bitboards[Const::W_KING];
@@ -109,10 +98,9 @@ namespace MoveExec {
 
         Utils::refreshOccupancy(state);
         Utils::refreshSquareToPieceIndex(state);
-        state.turn ^= 1;
     }
 
-    void undoMove(State& state, Undo& undo) {
+    void undoMove(State& state, const Undo& undo) {
         ::memcpy(state.bitboards, undo.bitboards, 12 * sizeof(uint64_t));
         ::memcpy(state.squareToPieceIndex, undo.squareToPieceIndex, sizeof(undo.squareToPieceIndex));
         ::memcpy(state.turnOccupancy, undo.turnOccupancy, sizeof(undo.turnOccupancy));

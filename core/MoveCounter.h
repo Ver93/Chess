@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>
 
 struct MoveCounter {
@@ -10,7 +11,6 @@ struct MoveCounter {
         promotion  += other.promotion;
         checks     += other.checks;
         checkMates += other.checkMates;
-        staleMates += other.staleMates;
         return *this;
     }
 
@@ -20,7 +20,6 @@ struct MoveCounter {
     int promotion = 0;
     int checks = 0;
     int checkMates = 0;
-    int staleMates = 0;
 
     void print() const {
         std::cout << "Captures: " << capture << std::endl;
@@ -29,6 +28,5 @@ struct MoveCounter {
         std::cout << "Promotion: " << promotion << std::endl;
         std::cout << "Checks: " << checks << std::endl;
         std::cout << "CheckMates: " << checkMates << std::endl;
-        std::cout << "StaleMates: " << staleMates << std::endl;
     }
 };

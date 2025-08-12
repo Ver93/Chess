@@ -1,13 +1,15 @@
 #pragma once
+
 #include <SFML/Graphics.hpp>
-#include "Utils.h"
-#include "State.h"
-#include "Move.h"
-#include "MoveGen.h"
-#include "Undo.h"
-#include "Move.h"
-#include "MoveExec.h"
-#include "ThreatGen.h"
+
+#include "utils.h"
+#include "state.h"
+#include "move.h"
+#include "undo.h"
+#include "movegen.h"
+#include "moveexec.h"
+#include "moveval.h"
+#include "threatgen.h"
 
 struct Square {
     sf::RectangleShape rect;
@@ -35,7 +37,7 @@ public:
                             case sf::Event::KeyPressed:
                         if (event.key.code == sf::Keyboard::R) {
                             state = originalState;
-                            Utils::print("🔄 Board reset via keyboard");
+                            Utils::print("Board reset via keyboard");
                         }
                         break;
 
@@ -50,7 +52,7 @@ public:
             window.display();
         }
 
-        Utils::print("🔍 End Reached");
+        Utils::print("End Reached");
     }
 
     State originalState;
@@ -207,19 +209,19 @@ private:
             if (move.from != clickedIndex) continue;
 
             if (move.movingType == Const::MT_CASTLE) {
-                int kingSquare = (state.turn == Const::PC_WHITE) ? Const::SQ_E1 : Const::SQ_E8;
-                if (state.threatMap[state.turn ^ 1] & (1ULL << kingSquare)) continue;
-                if (!MoveExec::isCastlingPathSafe(state, move.to, state.threatMap[state.turn ^ 1])) continue;
+                if (MoveVal::isKingInCheckBeforeMove(state)) continue;
+                if (!MoveVal::isCastlingPathSafe(state, move.to, state.threatMap[state.turn ^ 1])) continue;
             }
 
             MoveExec::makeMove(state, move, undo);
+            MoveExec::switchTurn(state);
             ThreatGen::updateThreats(state);
 
-            bool isLegal = !MoveExec::isOpponentKingInCheck(state);
+            bool isLegal = !MoveVal::isKingInCheckAfterMove(state);
 
             if (isLegal && move.movingType == Const::MT_CASTLE) {
                 bool isWhite = (state.turn == Const::PC_WHITE);
-                isLegal = MoveExec::isCastlingPathSafe(state, move.to, state.threatMap[state.turn]);
+                isLegal = MoveVal::isCastlingPathSafe(state, move.to, state.threatMap[state.turn]);
             }
 
             if (isLegal) {
