@@ -10,6 +10,7 @@
 #include "moveexec.h"
 #include "moveval.h"
 #include "threatgen.h"
+#include "engine.h"
 
 struct Square {
     sf::RectangleShape rect;
@@ -173,11 +174,13 @@ private:
         int clickedIndex = selectSquare();
 
         if (selectedSquare != -1 && clickedIndex != selectedSquare) {
-            for (Move& move : legalMoves) {
-                if (move.to == clickedIndex) {
+            for (const Move& move : legalMoves) {
+                if (move.from == selectedSquare && move.to == clickedIndex) {
                     Undo undo;
                     MoveExec::makeMove(state, move, undo);
+                    MoveExec::switchTurn(state);
                     ThreatGen::updateThreats(state);
+
                     selectedSquare = -1;
                     legalMoves.clear();
                     resetColors();
@@ -198,38 +201,16 @@ private:
             }
         }
 
+        if (pieceIndex == -1) return;
         int pieceColor = (pieceIndex < 6) ? 0 : 1;
-        if (pieceIndex == -1 || pieceColor != state.turn)
-            return;
+        if (pieceColor != state.turn) return;
 
-        std::vector<Move> pseudoMoves = MoveGen::generatePseudoMoves(state);
-        Undo undo;
-
-        for (Move& move : pseudoMoves) {
-            if (move.from != clickedIndex) continue;
-
-            if (move.movingType == Const::MT_CASTLE) {
-                if (MoveVal::isKingInCheckBeforeMove(state)) continue;
-                if (!MoveVal::isCastlingPathSafe(state, move.to, state.threatMap[state.turn ^ 1])) continue;
-            }
-
-            MoveExec::makeMove(state, move, undo);
-            MoveExec::switchTurn(state);
-            ThreatGen::updateThreats(state);
-
-            bool isLegal = !MoveVal::isKingInCheckAfterMove(state);
-
-            if (isLegal && move.movingType == Const::MT_CASTLE) {
-                bool isWhite = (state.turn == Const::PC_WHITE);
-                isLegal = MoveVal::isCastlingPathSafe(state, move.to, state.threatMap[state.turn]);
-            }
-
-            if (isLegal) {
+        std::vector<Move> moves = Engine::generateLegalMoves(state);
+        for (const Move& move : moves) {
+            if (move.from == clickedIndex) {
                 legalMoves.push_back(move);
                 highlightSquare(move.to, sf::Color::Green);
             }
-
-            MoveExec::undoMove(state, undo);
         }
 
         highlightSquare(clickedIndex, sf::Color::Blue);

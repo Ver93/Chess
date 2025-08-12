@@ -56,7 +56,6 @@ namespace Test {
     int perft(int depth, State& state, MoveCounter& counters) {
         if (depth == 0) return 1;
         int nodes = 0;
-        ThreatGen::updateThreats(state);
         std::vector<Move> pseudo = MoveGen::generatePseudoMoves(state);
         Undo undo;
 

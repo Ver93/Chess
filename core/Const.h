@@ -59,29 +59,6 @@ namespace Const {
     constexpr int C_QUEEN_SIDE                  = 0;
     constexpr int C_KING_SIDE                   = 1;
 
-    /* Bitmask Per Square*/
-    constexpr uint64_t SQUARE_MASK[64] = {
-        1ULL << 0,  1ULL << 1,  1ULL << 2,  1ULL << 3,  1ULL << 4,  1ULL << 5,  1ULL << 6,  1ULL << 7,
-        1ULL << 8,  1ULL << 9,  1ULL << 10, 1ULL << 11, 1ULL << 12, 1ULL << 13, 1ULL << 14, 1ULL << 15,
-        1ULL << 16, 1ULL << 17, 1ULL << 18, 1ULL << 19, 1ULL << 20, 1ULL << 21, 1ULL << 22, 1ULL << 23,
-        1ULL << 24, 1ULL << 25, 1ULL << 26, 1ULL << 27, 1ULL << 28, 1ULL << 29, 1ULL << 30, 1ULL << 31,
-        1ULL << 32, 1ULL << 33, 1ULL << 34, 1ULL << 35, 1ULL << 36, 1ULL << 37, 1ULL << 38, 1ULL << 39,
-        1ULL << 40, 1ULL << 41, 1ULL << 42, 1ULL << 43, 1ULL << 44, 1ULL << 45, 1ULL << 46, 1ULL << 47,
-        1ULL << 48, 1ULL << 49, 1ULL << 50, 1ULL << 51, 1ULL << 52, 1ULL << 53, 1ULL << 54, 1ULL << 55,
-        1ULL << 56, 1ULL << 57, 1ULL << 58, 1ULL << 59, 1ULL << 60, 1ULL << 61, 1ULL << 62, 1ULL << 63
-    };
-
-    enum SQUARE : int {
-        A1, B1, C1, D1, E1, F1, G1, H1,
-        A2, B2, C2, D2, E2, F2, G2, H2,
-        A3, B3, C3, D3, E3, F3, G3, H3,
-        A4, B4, C4, D4, E4, F4, G4, H4,
-        A5, B5, C5, D5, E5, F5, G5, H5,
-        A6, B6, C6, D6, E6, F6, G6, H6,
-        A7, B7, C7, D7, E7, F7, G7, H7,
-        A8, B8, C8, D8, E8, F8, G8, H8,
-    };
-
     constexpr uint64_t W_CASTLE_BLOCKER_QS =
         (1ULL << SQUARE::B1) |
         (1ULL << SQUARE::C1) |
@@ -131,6 +108,17 @@ namespace Const {
         B_KNIGHT, B_BISHOP, B_ROOK, B_QUEEN
     };
 
+    enum SQUARE : int {
+        A1, B1, C1, D1, E1, F1, G1, H1,
+        A2, B2, C2, D2, E2, F2, G2, H2,
+        A3, B3, C3, D3, E3, F3, G3, H3,
+        A4, B4, C4, D4, E4, F4, G4, H4,
+        A5, B5, C5, D5, E5, F5, G5, H5,
+        A6, B6, C6, D6, E6, F6, G6, H6,
+        A7, B7, C7, D7, E7, F7, G7, H7,
+        A8, B8, C8, D8, E8, F8, G8, H8,
+    };
+
     /* Bitmap file exclusions */
     constexpr uint64_t EXCLUDE_A_FILE           = 0xfefefefefefefefeULL;
     constexpr uint64_t EXCLUDE_B_FILE           = 0xfdfdfdfdfdfdfdfdULL;
@@ -148,6 +136,18 @@ namespace Const {
 
     constexpr uint64_t NO_MASK                  = 0x00ULL;
 
+    /* Bitmask Per Square*/
+    constexpr uint64_t SQUARE_MASK[64] = {
+        1ULL << 0,  1ULL << 1,  1ULL << 2,  1ULL << 3,  1ULL << 4,  1ULL << 5,  1ULL << 6,  1ULL << 7,
+        1ULL << 8,  1ULL << 9,  1ULL << 10, 1ULL << 11, 1ULL << 12, 1ULL << 13, 1ULL << 14, 1ULL << 15,
+        1ULL << 16, 1ULL << 17, 1ULL << 18, 1ULL << 19, 1ULL << 20, 1ULL << 21, 1ULL << 22, 1ULL << 23,
+        1ULL << 24, 1ULL << 25, 1ULL << 26, 1ULL << 27, 1ULL << 28, 1ULL << 29, 1ULL << 30, 1ULL << 31,
+        1ULL << 32, 1ULL << 33, 1ULL << 34, 1ULL << 35, 1ULL << 36, 1ULL << 37, 1ULL << 38, 1ULL << 39,
+        1ULL << 40, 1ULL << 41, 1ULL << 42, 1ULL << 43, 1ULL << 44, 1ULL << 45, 1ULL << 46, 1ULL << 47,
+        1ULL << 48, 1ULL << 49, 1ULL << 50, 1ULL << 51, 1ULL << 52, 1ULL << 53, 1ULL << 54, 1ULL << 55,
+        1ULL << 56, 1ULL << 57, 1ULL << 58, 1ULL << 59, 1ULL << 60, 1ULL << 61, 1ULL << 62, 1ULL << 63
+    };
+
     /* FEN-string constants */
     const std::string STARTING_FEN              = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     const std::string POSITION_2                = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ";
@@ -163,6 +163,17 @@ namespace Const {
         {"pos 5", POSITION_5}
     };
 
+    /* Evaluation Values*/
+    constexpr int INF                           = 1000000000;
+
+    /* Piece Values */
+    constexpr int PV_PAWN                       = 100;
+    constexpr int PV_KNIGHT                     = 320;
+    constexpr int PV_BISHOP                     = 350;
+    constexpr int PV_ROOK                       = 500;
+    constexpr int PV_QUEEN                      = 900;
+    constexpr int PV_KING                       = INF;
+
     /* Helpers */
     constexpr int getPieceType(int pieceIndex) {
         return (pieceIndex >= 6) ? pieceIndex - 6 : pieceIndex;
@@ -174,5 +185,17 @@ namespace Const {
 
     constexpr const int* getPromotionPieces(bool isWhite) {
         return isWhite ? W_PROMOTION_PIECES : B_PROMOTION_PIECES;
+    }
+
+    constexpr int getPieceValue(int pieceType){
+        switch (pieceType){
+        case PT_PAWN:                           return PV_PAWN; break;
+        case PT_KNIGHT:                         return PV_KNIGHT; break;
+        case PT_BISHOP:                         return PV_BISHOP; break;
+        case PT_ROOK:                           return PV_ROOK; break;
+        case PT_QUEEN:                          return PV_QUEEN; break;
+        case PT_KING:                           return PV_KING; break;
+        }
+        return 0;
     }
 }

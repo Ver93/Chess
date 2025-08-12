@@ -3,6 +3,7 @@
 #include "const.h"
 
 struct Move {
+    Move() = default;
     Move(int f, int t, int mp, int pt, int mt) : from(f), to(t), movingPiece(mp), pieceType(pt), movingType(mt) {}
     
     int from            = Const::NO_VALUE;
@@ -20,6 +21,8 @@ struct Move {
     int rookPiece       = Const::NO_VALUE;
 
     int promotionPiece  = Const::NO_VALUE;
+
+    int score           = Const::NO_VALUE;
 
     inline static Move quiet(int from, int to, int mp, int pt) {
         return Move{from, to, mp, pt, Const::MT_QUIET};
