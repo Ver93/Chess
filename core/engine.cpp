@@ -56,11 +56,7 @@ void Engine::run() {
                 }
 
                 move(bestMove);
-                std::cout << "bestmove "
-                        << Utils::squareToString(bestMove.from)
-                        << Utils::squareToString(bestMove.to)
-                        << std::endl;
-                Utils::printBoard(state);
+                Utils::printUCIMove(bestMove);
             } else if (token == "reset") {
                 state = originalState;
             }else if (token == "quit") {

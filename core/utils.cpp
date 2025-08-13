@@ -211,4 +211,25 @@ namespace Utils {
         }
     }
 
+    char pieceTypeToChar(int pieceType) {
+        switch (pieceType) {
+            case Const::PT_QUEEN: return 'q';
+            case Const::PT_ROOK: return 'r';
+            case Const::PT_BISHOP: return 'b';
+            case Const::PT_KNIGHT: return 'n';
+            default: return ' ';
+        }
+    }
+
+    void printUCIMove(const Move& move){
+        std::string bestMove;
+        if(move.movingType == Const::MT_PROMOTION || move.movingType == Const::MT_PROMOTION_CAPTURE){
+            int pieceType = Const::getPieceType(move.promotionPiece);
+            char promoChar = (char)tolower(Utils::pieceTypeToChar(pieceType));
+            bestMove = (squareToString(move.from) + squareToString(move.to) + promoChar);
+        } else {
+            bestMove = (squareToString(move.from) + squareToString(move.to));
+        }
+        std::cout << "bestmove" << " " << bestMove << std::endl; 
+    }
 }

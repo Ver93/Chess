@@ -34,4 +34,5 @@ namespace Utils {
     std::pair<int, int> parseMoveString(const std::string& moveStr);
     void print(const Move& move);
     int charToPieceIndex(char c, bool isWhite);
+    void printUCIMove(const Move& move);
 }
