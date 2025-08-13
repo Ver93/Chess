@@ -105,9 +105,9 @@ namespace Utils {
         state.rooksMoved[Const::PC_BLACK][1] = (castling.find('k') == std::string::npos);
 
         if(enPassant != "-"){
-            int file = enPassant[0] - 'a';
-            int rank = enPassant[1] - '1';
-            state.enPassantSquare = rank * 8 + file;
+            int epfile = enPassant[0] - 'a';
+            int eprank = enPassant[1] - '1';
+            state.enPassantSquare = eprank * 8 + epfile;
             state.enPassantTarget = state.enPassantSquare;
         } else {
             state.enPassantSquare = Const::NO_VALUE;
@@ -140,10 +140,43 @@ namespace Utils {
         return (sq ^ 56);
     }
 
-    std::string squareName(const int sq) {
+    std::string squareToString(const int sq) {
         const char files[] = "abcdefgh";
         int file = sq % 8;
         int rank = sq / 8;
         return std::string(1, files[file]) + std::to_string(rank + 1);
     }
+
+    int stringToSquare(const std::string& str) {
+        if (str.length() != 2) return -1;
+
+        char fileChar = str[0];
+        char rankChar = str[1];
+
+        int file = fileChar - 'a';
+        int rank = rankChar - '1';
+
+        if (file < 0 || file > 7 || rank < 0 || rank > 7) return -1;
+
+        return rank * 8 + file;
+    }
+
+    std::pair<int, int> parseMoveString(const std::string& moveStr) {
+        if (moveStr.length() != 4) return {-1, -1};
+
+        std::string fromStr = moveStr.substr(0, 2);
+        std::string toStr = moveStr.substr(2, 2);
+
+        int from = stringToSquare(fromStr);
+        int to = stringToSquare(toStr);
+
+        return {from, to};
+    }
+
+    void print(const Move& move) {
+        const std::string from = squareToString(move.from);
+        const std::string to = squareToString(move.to);
+        std::cout << "Move: " << from << " -> " << to << " Score: " << move.score << std::endl;
+    }
+
 }

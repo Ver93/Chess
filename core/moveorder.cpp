@@ -1,7 +1,7 @@
 #include "moveorder.h"
 
 namespace MoveOrder {
-    bool isFavorableCapture(const State& state, const Move& move) {
+    bool isFavorableCapture(const Move& move) {
         int attackerValue = Const::getPieceValue(move.movingPiece);
         int victimValue = Const::getPieceValue(move.capturePiece);
 
@@ -14,7 +14,7 @@ namespace MoveOrder {
             int capturedValue = Const::getPieceValue(move.capturePiece);
             int attackerValue = Const::getPieceValue(move.movingPiece);
 
-            if (isFavorableCapture(state, move)) {
+            if (isFavorableCapture(move)) {
                 score += 1000 + capturedValue - attackerValue;
             } else {
                 if(state.threatMap[state.turn ^ 1] & Const::SQUARE_MASK[move.to]){

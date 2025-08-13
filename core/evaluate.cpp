@@ -12,7 +12,7 @@ namespace Evalaute {
         return score;
     }
 
-    int evaluateKingSafety(int pieceType, int sq, bool isWhite, uint64_t king, uint64_t pawns) {
+    int evaluateKingSafety(int pieceType, int sq, uint64_t king, uint64_t pawns) {
         if (pieceType != Const::PT_KING) return 0;
         uint64_t kingZone = AttackGlobals::ad->getKingTable(sq);
         uint64_t safety = (kingZone & pawns) & ~king;
@@ -74,7 +74,7 @@ namespace Evalaute {
 
             score += Const::getPieceValue(pieceType);
             score += getPSTBonus(pieceType, sq, isWhite);
-            score += evaluateKingSafety(pieceType, sq, isWhite, king, pawns);
+            score += evaluateKingSafety(pieceType, sq, king, pawns);
             score += getPassedPawnBonus(pieceType, sq, opponent, friendly);
             score += evaluateMobility(pieceType, sq, isWhite, friendly, opponent);
         }

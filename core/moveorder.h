@@ -8,7 +8,7 @@
 #include "const.h"
 
 namespace MoveOrder {
-    bool isFavorableCapture(const State& state, const Move& move);
+    bool isFavorableCapture(const Move& move);
     int scoreSingle(State& state, Move& move);
     void scoreMoves(State& state, std::vector<Move>& moves);
     void sortMoves(std::vector<Move>& moves);

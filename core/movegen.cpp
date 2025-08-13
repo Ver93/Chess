@@ -16,7 +16,6 @@ namespace MoveGen {
     void getPseudoAttacks(int from, int movingPiece, int pieceType, bool isWhite, const uint64_t occupancy, const uint64_t friendly, State& state, std::vector<Move>& pseudoMoves) {
         uint64_t pseudoAttacks = getPseudo(from, pieceType, isWhite, occupancy);
         pseudoAttacks &= ~friendly;
-        uint64_t opponent = occupancy & ~friendly;
 
     switch (pieceType) {
         case Const::PT_PAWN: {

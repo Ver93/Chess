@@ -10,6 +10,7 @@
 
 #include "bitintrinsics.h"
 #include "state.h"
+#include "move.h"
 
 namespace Utils {
 
@@ -28,4 +29,7 @@ namespace Utils {
     int countBits(uint64_t bb);
 
     std::string squareName(const int sq);
+    int stringToSquare(const std::string& str);
+    std::pair<int, int> parseMoveString(const std::string& moveStr);
+    void print(const Move& move);
 }

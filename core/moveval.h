@@ -6,5 +6,5 @@
 namespace MoveVal {
     bool isKingInCheckBeforeMove(State& state);
     bool isKingInCheckAfterMove(State& state);
-    bool isCastlingPathSafe(State& state, int toSquare, const uint64_t threatMap);
+    bool isCastlingPathSafe(int toSquare, const uint64_t threatMap);
 }

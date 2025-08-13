@@ -9,7 +9,7 @@ namespace MoveVal {
         return state.threatMap[state.turn] & state.kingBitMap[state.turn ^ 1];
     }
 
-    bool isCastlingPathSafe(State& state, int toSquare, const uint64_t threatMap) {
+    bool isCastlingPathSafe(int toSquare, const uint64_t threatMap) {
         uint64_t mask = 0;
         switch (toSquare) {
             case Const::SQUARE::G1: mask = Const::W_CASTLE_THREAT_KS; break;

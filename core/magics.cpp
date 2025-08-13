@@ -2,7 +2,7 @@
 
 namespace Magics {
     void initialize() {
-        std::string path = "../data/Magics.dat";
+        std::string path = "data/Magics.dat";
         AttackGlobals::ad = std::make_unique<AttackData>();
 
         if (MagicUtils::fileExists(path)) {

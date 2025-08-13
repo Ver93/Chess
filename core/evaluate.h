@@ -10,7 +10,7 @@ namespace Evalaute {
 
     int getPassedPawnBonus(int pieceType, int square, uint64_t opponent, uint64_t friendly);
     
-    int evaluateKingSafety(int pieceType, int sq, bool isWhite, uint64_t king, uint64_t pawns);
+    int evaluateKingSafety(int pieceType, int sq, uint64_t king, uint64_t pawns);
     
     int getPSTBonus(int pieceType, int sq, bool isWhite);
     
