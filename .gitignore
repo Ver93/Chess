@@ -11,6 +11,8 @@ bin/
 *.log
 *.tmp
 
+/data
+
 # Ignore generated data
 build.bat
 count.bat
