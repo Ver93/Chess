@@ -6,12 +6,11 @@ namespace Magics {
         AttackGlobals::ad = std::make_unique<AttackData>();
 
         if (MagicUtils::fileExists(path)) {
-            std::cout << "✅ Magic Data Exists!" << std::endl;
             AttackGlobals::ad = MagicUtils::loadMagicData(path);
             return;
         }
 
-        std::cout << "🧠 Magic initializing... " << std::endl;
+        std::cout << "Magic initializing... " << std::endl;
 
         for (int square = 0; square < 64; square++) {
             auto& data = *AttackGlobals::ad;
@@ -46,10 +45,10 @@ namespace Magics {
                 data.rookAttackTable[square][index] = MagicUtils::generateSlidingMoves(square, blockers, Const::PT_ROOK);
             }
 
-            std::cout << "✅ Magic setup complete for square " << square << "\n";
+            std::cout << "Magic setup complete for square " << square << "\n";
         }
 
-        MagicUtils::saveMagicData(AttackGlobals::ad, path); // ✅ No move!
-        std::cout << "✅ Magic initialization complete!" << std::endl;
+        MagicUtils::saveMagicData(AttackGlobals::ad, path);
+        std::cout << "Magic initialization complete!" << std::endl;
     }
 }

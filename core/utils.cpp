@@ -13,6 +13,32 @@ namespace Utils {
         std::cout << std::endl;
     }
 
+    void printBoard(State& state) {
+        const char symbols[12] = {
+            'P', 'N', 'B', 'R', 'Q', 'K',
+            'p', 'n', 'b', 'r', 'q', 'k'
+        };
+
+        for (int rank = 7; rank >= 0; --rank) {
+            for (int file = 0; file < 8; ++file) {
+                int square = rank * 8 + file;
+                uint64_t mask = 1ULL << square;
+                char symbol = '.';
+
+                for (int i = 0; i < 12; ++i) {
+                    if (state.bitboards[i] & mask) {
+                        symbol = symbols[i];
+                        break;
+                    }
+                }
+
+                std::cout << symbol << " ";
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
+    }
+
     void refreshOccupancy(State& state){
         state.turnOccupancy[Const::PC_WHITE] =
         state.bitboards[Const::W_PAWN] |
@@ -46,7 +72,6 @@ namespace Utils {
     }
 
     void loadFen(State& state, const std::string& fen){
-        std::cout << "Initializing FEN string.." << std::endl;
         std::stringstream ss(fen);
         std::string position, activeColor, castling, enPassant;
 
@@ -118,7 +143,6 @@ namespace Utils {
         state.kingBitMap[Const::PC_BLACK] = state.bitboards[Const::B_KING];
         refreshOccupancy(state);
         refreshSquareToPieceIndex(state);
-        std::cout << "FEN string initialized!" << std::endl;
     }
 
     int popLSB(uint64_t& bb){
@@ -162,8 +186,6 @@ namespace Utils {
     }
 
     std::pair<int, int> parseMoveString(const std::string& moveStr) {
-        if (moveStr.length() != 4) return {-1, -1};
-
         std::string fromStr = moveStr.substr(0, 2);
         std::string toStr = moveStr.substr(2, 2);
 
@@ -177,6 +199,16 @@ namespace Utils {
         const std::string from = squareToString(move.from);
         const std::string to = squareToString(move.to);
         std::cout << "Move: " << from << " -> " << to << " Score: " << move.score << std::endl;
+    }
+
+    int charToPieceIndex(char c, bool isWhite) {
+        switch (tolower(c)) {
+            case 'q': return isWhite ? Const::W_QUEEN : Const::B_QUEEN;
+            case 'r': return isWhite ? Const::W_ROOK : Const::B_ROOK;
+            case 'b': return isWhite ? Const::W_BISHOP : Const::B_BISHOP;
+            case 'n': return isWhite ? Const::W_KNIGHT : Const::B_KNIGHT;
+            default: return -1;
+        }
     }
 
 }

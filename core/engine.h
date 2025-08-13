@@ -24,5 +24,7 @@ public:
 private:
     State state;
     State originalState;
+    const std::string fen;
+    std::vector<Move> pseudoMoves;
     void move(const Move& move);
 };

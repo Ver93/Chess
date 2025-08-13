@@ -14,3 +14,4 @@ bin/
 # Ignore generated data
 build.bat
 count.bat
+cbuild.bat

@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 project(RookieEngine LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_FLAG_RELEASE "-03 -march=native -flto -DNDEBUG")
 
 set(SOURCES
     core/main.cpp
@@ -19,6 +20,7 @@ set(SOURCES
     core/moveorder.cpp
     core/search.cpp
     core/engine.cpp
+    core/legalmove.cpp
 )
 
 add_executable(Rookie ${SOURCES})

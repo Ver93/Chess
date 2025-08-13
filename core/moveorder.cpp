@@ -23,6 +23,11 @@ namespace MoveOrder {
                 score -= 300;
             }
         }
+
+        if(move.movingType == Const::MT_PROMOTION || move.movingType == Const::MT_PROMOTION){
+            score += 1000;
+        }
+        
         return score;
     }
 

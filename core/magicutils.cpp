@@ -157,7 +157,7 @@ namespace MagicUtils {
         case Const::PT_ROOK:
             for (int trial = 0; trial < 10000000; ++trial) {
                 if(relevantBits == 0){
-                    return 0ULL; //For corners 0, 7, 56, 63
+                    return 0ULL;
                 }
                 uint64_t magic = MagicUtils::randomMagic();
                 if(MagicUtils::filterHeuristics(magic, mask, 5)) continue;
@@ -167,19 +167,19 @@ namespace MagicUtils {
             break;
         }
 
-        std::cerr << "❌ Failed to find magic for square " << square << "\n";
+        std::cerr << "Failed to find magic for square " << square << "\n";
         return 0ULL;
     }
 
         void saveMagicData(std::unique_ptr<AttackData>& dataPtr, const std::string& saveString) {
         if (!dataPtr) {
-            std::cerr << "❌ MagicData pointer is null. Cannot save.\n";
+            std::cerr << "MagicData pointer is null. Cannot save.\n";
             return;
         }
 
         std::ofstream out(saveString, std::ios::binary);
         if (!out) {
-            std::cerr << "❌ Failed to open file for writing: " << saveString << "\n";
+            std::cerr << "Failed to open file for writing: " << saveString << "\n";
             return;
         }
 
@@ -212,13 +212,13 @@ namespace MagicUtils {
         }
 
         out.close();
-        std::cout << "✅ Magic Tables Saved Successfully to " << saveString << std::endl;
+        std::cout << "Magic Tables Saved Successfully to " << saveString << std::endl;
     }
 
     std::unique_ptr<AttackData> loadMagicData(const std::string& loadString) {
         std::ifstream in(loadString, std::ios::binary);
         if (!in) {
-            std::cerr << "❌ Failed to open file for reading: " << loadString << "\n";
+            std::cerr << "Failed to open file for reading: " << loadString << "\n";
             return nullptr;
         }
 
@@ -251,7 +251,7 @@ namespace MagicUtils {
         }
 
         in.close();
-        std::cout << "✅ Magic Tables Loaded Successfully from " << loadString << std::endl;
+        std::cout << "Magic Tables Loaded Successfully" << std::endl;
         return dataPtr;
     }
 }

@@ -22,7 +22,12 @@ struct Move {
 
     int promotionPiece  = Const::NO_VALUE;
 
-    int score           = Const::NO_VALUE;
+    int score           = 0;
+
+    inline bool isValid() const {
+        return from >= 0 && to >= 0;
+    }
+
 
     inline static Move quiet(int from, int to, int mp, int pt) {
         return Move{from, to, mp, pt, Const::MT_QUIET};

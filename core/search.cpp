@@ -3,7 +3,7 @@
 namespace Search {
     int alphaBeta(State& state, int depth, int alpha, int beta){
         if(depth == 0) return Evalaute::evaluate(state);
-        std::vector<Move> moves = MoveGen::generatePseudoMoves(state);
+        std::vector<Move> moves = LegalMove::generate(state);
 
         MoveOrder::scoreMoves(state, moves);
         MoveOrder::sortMoves(moves);
@@ -11,20 +11,9 @@ namespace Search {
         Undo undo;
         for (auto & move : moves)
         {
-            if (move.movingType == Const::MT_CASTLE) {
-                if (MoveVal::isKingInCheckBeforeMove(state)) continue;
-                if (!MoveVal::isCastlingPathSafe(move.to, state.threatMap[state.turn ^ 1])) continue;
-            }
-
             MoveExec::makeMove(state, move, undo);
             MoveExec::switchTurn(state);
             ThreatGen::updateThreats(state);
-
-            if (MoveVal::isKingInCheckAfterMove(state)) {
-                MoveExec::undoMove(state, undo);
-                continue;
-            }
-
             int score = -alphaBeta(state, depth - 1, -beta, -alpha);   
             MoveExec::undoMove(state, undo);
 
@@ -43,27 +32,18 @@ namespace Search {
     Move findBestMove(State& state, int depth){
         Move bestMove;
         int bestScore = -Const::INF;
-        std::vector<Move> moves = MoveGen::generatePseudoMoves(state);
+        std::vector<Move> moves = LegalMove::generate(state);
+        Utils::print((int)moves.size());
+        if(moves.size() == 1) return moves[0];
 
         MoveOrder::scoreMoves(state, moves);
         MoveOrder::sortMoves(moves);
-
         Undo undo;
         for (auto& move : moves)
         {
-            if (move.movingType == Const::MT_CASTLE) {
-                if (MoveVal::isKingInCheckBeforeMove(state)) continue;
-                if (!MoveVal::isCastlingPathSafe(move.to, state.threatMap[state.turn ^ 1])) continue;
-            }
-
             MoveExec::makeMove(state, move, undo);
             MoveExec::switchTurn(state);
             ThreatGen::updateThreats(state);
-
-            if (MoveVal::isKingInCheckAfterMove(state)) {
-                MoveExec::undoMove(state, undo);
-                continue;
-            }
 
             int score = -alphaBeta(state, depth - 1, -Const::INF, Const::INF);
             MoveExec::undoMove(state, undo);

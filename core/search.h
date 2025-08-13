@@ -12,6 +12,7 @@
 #include "evaluate.h"
 #include "engine.h"
 #include "moveorder.h"
+#include "legalmove.h"
 
 namespace Search {
     int alphaBeta(State& state, int depth, int alpha, int beta);

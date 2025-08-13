@@ -20,6 +20,7 @@ namespace Utils {
     }
 
     void print(const uint64_t mask);
+    void printBoard(State& state);
     void refreshOccupancy(State& state);
     void refreshSquareToPieceIndex(State& state);
     void loadFen(State& state, const std::string& fen);
@@ -28,8 +29,9 @@ namespace Utils {
     int popLSB(uint64_t& bb);
     int countBits(uint64_t bb);
 
-    std::string squareName(const int sq);
+    std::string squareToString(const int sq);
     int stringToSquare(const std::string& str);
     std::pair<int, int> parseMoveString(const std::string& moveStr);
     void print(const Move& move);
+    int charToPieceIndex(char c, bool isWhite);
 }

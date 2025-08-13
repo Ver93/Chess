@@ -2,44 +2,70 @@
 
 void Engine::initialize() {
     Magics::initialize();
-    std::string startFEN = Const::STARTING_FEN;
-    Utils::loadFen(state, startFEN);
+    Utils::loadFen(state, Const::STARTING_FEN);
     originalState = state;
 }
 
 void Engine::run() {
     std::string input;
-
     while (std::getline(std::cin, input)) {
-        if (input == "uci") {
-            std::cout << "id name Rookie\n";
-            std::cout << "Rookie By Name, Grandmaster By Nature.\n";
-            std::cout << "id author Ver93\n";
-            std::cout << "uciok\n";
-        } else if (input == "isready") {
-            std::cout << "readyok\n";
-        } else if (input.rfind("position", 0) == 0) {
-        } else if (input.rfind("perft", 0) == 0) {
-            std::istringstream ss(input);
-            std::string command;
-            int depth;
+        std::istringstream ss(input);
+        std::string token;
 
-            ss >> command >> depth;
+        while (ss >> token) {
+            if (token == "uci") {
+                std::cout << "id name Rookie\n";
+                std::cout << "Rookie By Name, Grandmaster By Nature.\n";
+                std::cout << "id author Ver93\n";
+                std::cout << "uciok\n";
+            } else if (token == "isready") {
+                std::cout << "readyok\n";
+            } else if (token == "position") {
+                std::string sub;
+                ss >> sub;
+                state = originalState;
 
-            if (ss.fail() || depth <= 0) {
-                Utils::print("Invalid Depth For Perft ", depth);
-                continue;
+                while (ss >> token) {
+                    if (token == "moves") {
+                        while (ss >> token) {
+                            std::pair<int, int> pos = Utils::parseMoveString(token);
+                            pseudoMoves = MoveGen::generatePseudoMoves(state);
+                            for (auto& lichMove : pseudoMoves) {
+                                if (lichMove.from == pos.first && lichMove.to == pos.second) {
+                                    bool isWhite = state.turn == Const::PC_WHITE;
+                                    if ((lichMove.movingType == Const::MT_PROMOTION || lichMove.movingType == Const::MT_PROMOTION_CAPTURE) &&
+                                    (token.length() == 5)) {
+                                        char pp = token[4];
+                                        int promotionPiece = Utils::charToPieceIndex(pp, isWhite);
+                                        lichMove.promotionPiece = promotionPiece;
+                                    }
+                                    move(lichMove);
+                                    Utils::printBoard(state);
+                                    break;
+                                } 
+                            }
+                        }
+                    }
+                }
+            } else if (token == "go") {
+                const Move bestMove = Search::findBestMove(state, 4);
+                if (bestMove.from == -1 || bestMove.to == -1) {
+                    std::cout << "bestmove 0000\n";
+                    std::cout << "info string Checkmate or stalemate detected.\n";
+                    return;
+                }
+
+                move(bestMove);
+                std::cout << "bestmove "
+                        << Utils::squareToString(bestMove.from)
+                        << Utils::squareToString(bestMove.to)
+                        << std::endl;
+                Utils::printBoard(state);
+            } else if (token == "reset") {
+                state = originalState;
+            }else if (token == "quit") {
+                return;
             }
-
-            Utils::print("Perft For Depth: ", depth, " Started.");
-            Timer::start();
-            Test::dividePerft(depth, state);
-            Timer::stop();
-        } else if (input.rfind("go", 0) == 0) {
-            const Move bestMove = Search::findBestMove(state, 4);
-            move(bestMove);
-        } else if (input == "quit") {
-            break;
         }
     }
 }
@@ -49,6 +75,4 @@ void Engine::move(const Move& move){
     MoveExec::makeMove(state, move, undo);
     MoveExec::switchTurn(state);
     ThreatGen::updateThreats(state);
-    Utils::print("Move Executed:");
-    Utils::print(move);
 }
