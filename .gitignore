@@ -1,0 +1,16 @@
+# Ignore build artifacts
+bin/
+*.exe
+*.obj
+*.out
+
+# Ignore IDE settings
+.vscode/
+
+# Ignore logs and temp files
+*.log
+*.tmp
+
+# Ignore generated data
+build.bat
+count.bat

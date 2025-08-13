@@ -4,8 +4,7 @@
 
 #include "const.h"
 
-struct State
-{
+struct State{
     int turn                    = 0;
     int squareToPieceIndex[64]  = {};
     int enPassantSquare         = Const::NO_VALUE;
