@@ -254,4 +254,12 @@ namespace MagicUtils {
         std::cout << "Magic Tables Loaded Successfully" << std::endl;
         return dataPtr;
     }
+
+    void ensureDataDirectoryExists(const std::filesystem::path& dirPath) {
+        if (!std::filesystem::exists(dirPath)) {
+            std::cout << "Creating directory: " << dirPath << std::endl;
+            std::filesystem::create_directories(dirPath);
+        }
+    }
+
 }

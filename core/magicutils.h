@@ -8,6 +8,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <filesystem>
 
 #include "const.h"
 #include "bitintrinsics.h"
@@ -25,4 +26,5 @@ namespace MagicUtils {
     uint64_t findMagic(int square, int relevantBits, int pt, uint64_t& mask, std::vector<uint64_t> permutations);
     void saveMagicData(std::unique_ptr<AttackData>& dataPtr, const std::string& saveString);
     std::unique_ptr<AttackData> loadMagicData(const std::string& loadString);
+    void ensureDataDirectoryExists(const std::filesystem::path& dirPath);
 }

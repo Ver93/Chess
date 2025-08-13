@@ -29,11 +29,11 @@ target_include_directories(Rookie PRIVATE
     ${PROJECT_SOURCE_DIR}/core
 )
 
-add_custom_command(TARGET Rookie POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${PROJECT_SOURCE_DIR}/data
-    $<TARGET_FILE_DIR:Rookie>/data
-)
+# add_custom_command(TARGET Rookie POST_BUILD
+#     COMMAND ${CMAKE_COMMAND} -E copy_directory
+#     ${PROJECT_SOURCE_DIR}/data
+#     $<TARGET_FILE_DIR:Rookie>/data
+# )
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(Rookie PRIVATE

@@ -2,8 +2,12 @@
 
 namespace Magics {
     void initialize() {
-        std::string path = "data/Magics.dat";
         AttackGlobals::ad = std::make_unique<AttackData>();
+
+        std::filesystem::path dataDir = std::filesystem::current_path() / "data";
+        MagicUtils::ensureDataDirectoryExists(dataDir);
+
+        std::string path = (dataDir / "Magics.dat").string();
 
         if (MagicUtils::fileExists(path)) {
             AttackGlobals::ad = MagicUtils::loadMagicData(path);
