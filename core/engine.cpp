@@ -40,7 +40,6 @@ void Engine::run() {
                                         lichMove.promotionPiece = promotionPiece;
                                     }
                                     move(lichMove);
-                                    Utils::printBoard(state);
                                     break;
                                 } 
                             }

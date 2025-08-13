@@ -28,3 +28,7 @@ mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . --config Release --parallel
+
+## 🌐 Play Against Botomir on Lichess!
+
+**Botomir** - is powered by the Rookie chess engine and battles players and bots alike on [Lichess.org](https://lichess.org/@/Botomir).

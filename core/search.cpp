@@ -33,7 +33,6 @@ namespace Search {
         Move bestMove;
         int bestScore = -Const::INF;
         std::vector<Move> moves = LegalMove::generate(state);
-        Utils::print((int)moves.size());
         if(moves.size() == 1) return moves[0];
 
         MoveOrder::scoreMoves(state, moves);
