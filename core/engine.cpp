@@ -1,21 +1,22 @@
 #include "engine.h"
+#include "attackglobals.h"
 
 void Engine::initialize() {
     Magics::initialize();
+    Evaluate::initialize();
     Utils::loadFen(state, Const::STARTING_FEN);
     originalState = state;
 }
 
 void Engine::run() {
     std::string input;
+
     while (std::getline(std::cin, input)) {
         std::istringstream ss(input);
         std::string token;
-
         while (ss >> token) {
             if (token == "uci") {
-                std::cout << "id name Rookie\n";
-                std::cout << "Rookie By Name, Grandmaster By Nature.\n";
+                std::cout << "id name Botomir\n";
                 std::cout << "id author Ver93\n";
                 std::cout << "uciok\n";
             } else if (token == "isready") {
@@ -28,8 +29,10 @@ void Engine::run() {
                 while (ss >> token) {
                     if (token == "moves") {
                         while (ss >> token) {
+                            
                             std::pair<int, int> pos = Utils::parseMoveString(token);
                             pseudoMoves = MoveGen::generatePseudoMoves(state);
+
                             for (auto& lichMove : pseudoMoves) {
                                 if (lichMove.from == pos.first && lichMove.to == pos.second) {
                                     bool isWhite = state.turn == Const::PC_WHITE;

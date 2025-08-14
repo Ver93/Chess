@@ -21,6 +21,8 @@ set(SOURCES
     core/search.cpp
     core/engine.cpp
     core/legalmove.cpp
+    core/evalutils.cpp
+    core/evalglobals.cpp
 )
 
 add_executable(Rookie ${SOURCES})

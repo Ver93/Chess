@@ -1,16 +1,6 @@
 #include "evaluate.h"
 
-namespace Evalaute {
-
-    int getPassedPawnBonus(int pieceType, int square, uint64_t opponent, uint64_t friendly){
-        if(pieceType != Const::PT_PAWN) return 0;
-        int score = 0;
-        uint64_t passed = Const::getPassedPawnFileMask(square);
-        if(opponent & passed) return score;
-        score += 50;
-        if(!(friendly & passed)) score -= 25;
-        return score;
-    }
+namespace Evaluate {
 
     int evaluateKingSafety(int pieceType, int sq, uint64_t king, uint64_t pawns) {
         if (pieceType != Const::PT_KING) return 0;
@@ -53,6 +43,52 @@ namespace Evalaute {
         }
     }
 
+    bool isPassedPawn(int square, bool isWhite, uint64_t opponentPawns){
+        uint64_t passedMask = (isWhite) ? EvalGlobals::ed.whitePawnPassedMask[square] : EvalGlobals::ed.blackPawnPassedMask[square]; 
+        return !(passedMask & opponentPawns);
+    }
+
+    bool isPawnBlocked(int square, uint64_t opponent){
+        uint64_t fileMask = EvalGlobals::ed.singleFileMask[square];
+        return (fileMask & opponent);
+    }
+
+    bool isPawnIsolated(int square, uint64_t friendly){
+        uint64_t relevantFiles = EvalGlobals::ed.adjacentPawnMask[square];
+        return !(relevantFiles & friendly);
+    }
+
+    bool isDoubledPawn(int square, uint64_t friendlyPawns) {
+        uint64_t fileMask = EvalGlobals::ed.singleFileMask[square];
+        int pawns = Utils::countBits(fileMask & friendlyPawns);
+        return pawns > 1;
+    }
+
+
+    int evaluatePawnStructure(int pieceType, int square, bool isWhite, uint64_t opponentPawns, uint64_t friendlyPawns, uint64_t opponent, uint64_t friendly) {
+        if (pieceType != Const::PT_PAWN) return 0;
+        int score = 0;
+
+        bool passed   = isPassedPawn(square, isWhite, opponentPawns);
+        bool blocked  = isPawnBlocked(square, opponent);
+        bool isolated = isPawnIsolated(square, friendly);
+        bool doubled  = isDoubledPawn(square, friendlyPawns);
+
+        if (passed) {
+            score += 60; 
+            if (!blocked) score += 20;
+            if (isolated) score -= 10;
+        } else {
+            score -= 10;
+        }
+
+        score += blocked ? -30 : 10;
+        score += isolated ? -20 : 10;
+        score += doubled ? -15 : 5;
+
+        return score;
+    }
+
     int evaluateMaterial(State& state, bool isWhite) {
         int score = 0;
 
@@ -64,8 +100,12 @@ namespace Evalaute {
                                       : state.turnOccupancy[Const::PC_WHITE];
 
         uint64_t king     = state.kingBitMap[state.turn]; 
-        uint64_t pawns    = (isWhite) ? state.bitboards[Const::W_PAWN]
+
+        uint64_t friendlyPawns    = (isWhite) ? state.bitboards[Const::W_PAWN]
                                       : state.bitboards[Const::B_PAWN];
+
+        uint64_t opponentPawns    = (isWhite) ? state.bitboards[Const::B_PAWN]
+                                      : state.bitboards[Const::W_PAWN];
 
         while (temp) {
             int sq = Utils::popLSB(temp);
@@ -74,9 +114,9 @@ namespace Evalaute {
 
             score += Const::getPieceValue(pieceType);
             score += getPSTBonus(pieceType, sq, isWhite);
-            score += evaluateKingSafety(pieceType, sq, king, pawns);
-            score += getPassedPawnBonus(pieceType, sq, opponent, friendly);
+            score += evaluateKingSafety(pieceType, sq, king, friendlyPawns);
             score += evaluateMobility(pieceType, sq, isWhite, friendly, opponent);
+            score += evaluatePawnStructure(pieceType, sq, isWhite, opponentPawns, friendlyPawns, opponent, friendly);
         }
 
         return score;
@@ -89,5 +129,15 @@ namespace Evalaute {
         int opponentScore = evaluateMaterial(state, !isWhite);
 
         return friendlyScore - opponentScore;
+    }
+
+    void initialize(){
+        for (int square = 0; square < 64; square++){
+            EvalGlobals::ed.singleFileMask[square] = EvalUtils::generateRelevantSingleFileMask(square);
+            EvalGlobals::ed.adjacentPawnMask[square] = EvalUtils::generateRelevantAdjacentFileMask(square);
+            EvalGlobals::ed.whitePawnPassedMask[square] = EvalUtils::generatePassedPawnMask(square, true);
+            EvalGlobals::ed.blackPawnPassedMask[square] = EvalUtils::generatePassedPawnMask(square, false);
+        }
+        
     }
 }

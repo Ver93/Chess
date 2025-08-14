@@ -261,5 +261,4 @@ namespace MagicUtils {
             std::filesystem::create_directories(dirPath);
         }
     }
-
 }

@@ -14,6 +14,7 @@
 #include "test.h"
 #include "search.h"
 #include "timer.h"
+#include "evaldata.h"
 
 class Engine {
 public:

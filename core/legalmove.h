@@ -13,4 +13,5 @@
 
 namespace LegalMove {
     std::vector<Move> generate(State& state);
+    std::vector<Move> generateTactical(State& state);
 }

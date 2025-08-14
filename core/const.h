@@ -210,6 +210,17 @@ namespace Const {
         0x8080808080808080ULL  // File H
     };
 
+    constexpr uint64_t RANK_MASKS[8] = {
+        0x00000000000000FFULL, // Rank 1
+        0x000000000000FF00ULL, // Rank 2
+        0x0000000000FF0000ULL, // Rank 3
+        0x00000000FF000000ULL, // Rank 4
+        0x000000FF00000000ULL, // Rank 5
+        0x0000FF0000000000ULL, // Rank 6
+        0x00FF000000000000ULL, // Rank 7
+        0xFF00000000000000ULL  // Rank 8
+    };
+
     constexpr uint64_t getPassedPawnFileMask(int sq) {
         int file = sq % 8;
         uint64_t mask = FILE_MASKS[file];
